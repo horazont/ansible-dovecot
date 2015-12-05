@@ -1,0 +1,15 @@
+require {
+    type dovecot_t;
+    type dovecot_deliver_t;
+    type dovecot_var_run_t;
+    attribute port_type;
+    attribute file_type;
+    class tcp_socket { name_bind read write };
+    class fifo_file { open write unlink };
+}
+
+type doveadm_port_t, port_type;
+
+allow dovecot_t doveadm_port_t:tcp_socket { name_bind read write };
+allow dovecot_t dovecot_var_run_t:fifo_file { read };
+allow dovecot_deliver_t dovecot_var_run_t:fifo_file { open write };

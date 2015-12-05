@@ -1,0 +1,10 @@
+---
+- name: restart dovecot
+  service: name=dovecot state=restarted
+
+- name: configure doveadm_port_t
+  command: semanage port -a -t doveadm_port_t --proto tcp {{ dovecot_doveadm_port }}
+  register: command_result
+  failed_when: "command_result.rc != 0 and 'already defined' not in command_result.stderr"
+  changed_when: "'already defined' not in command_result.stderr"
+  notify: restart dovecot

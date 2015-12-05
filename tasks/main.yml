@@ -1,0 +1,102 @@
+---
+- name: install dovecot (redhat)
+  dnf: name={{ item }} state=latest
+  when: ansible_os_family == "RedHat" and ansible_pkg_mgr == "dnf"
+  with_items:
+  - dovecot
+  - dovecot-pigeonhole
+  tags:
+  - dovecot
+
+- name: install selinux utils
+  dnf: name={{ item }} state=latest
+  when: fedora_selinux
+  with_items:
+  - setools-console
+  tags:
+  - dovecot
+  - polforge
+
+- name: install dovecot (debian)
+  apt: name={{ item }} state=latest
+  when: ansible_os_family == "Debian"
+  with_items:
+  - dovecot-core
+  - dovecot-imapd
+  - dovecot-sieve
+  - dovecot-managesieved
+  - dovecot-ldap
+  - dovecot-antispam
+  tags:
+  - dovecot
+
+- name: configure dovecot
+  template: src=dovecot/dovecot.conf
+            dest=/etc/dovecot/dovecot.conf
+            owner=root
+            group=root
+            mode=ugo=r
+  tags:
+  - dovecot
+  notify:
+  - restart dovecot
+
+- name: upload certificate
+  copy: content="{{ dovecot_tls_cert }}"
+        dest=/etc/dovecot/ssl.crt
+        owner=root
+        group=root
+        mode=ugo=r
+  tags:
+  - dovecot
+  notify:
+  - restart dovecot
+
+- name: upload key
+  copy: content="{{ dovecot_tls_key }}"
+        dest=/etc/dovecot/ssl.key
+        owner=root
+        group=root
+        mode=u=r,go-rwx
+  tags:
+  - dovecot
+  notify:
+  - restart dovecot
+
+- name: add polforge module
+  template: src=dovecot_replication.te
+            dest="{{ polforge_dir }}/modules/"
+            owner=root
+            group=root
+            mode=u=rw,go-rwx
+  tags:
+  - dovecot
+  - polforge
+  when: fedora_selinux and dovecot_replication
+  notify:
+  - rebuild polforge
+  - configure doveadm_port_t
+  - restart dovecot
+
+- name: remove legacy polforge module
+  file: path="{{ polforge_dir }}/modules/doveadm_port.te"
+        state=absent
+  tags:
+  - dovecot
+  - polforge
+  when: fedora_selinux and dovecot_replication
+  notify:
+  - rebuild polforge
+  - restart dovecot
+
+- name: test current port type of doveadm port
+  command: seinfo --portcon={{ dovecot_doveadm_port }} --protocol=tcp
+  register: command_result
+  failed_when: "command_result.rc != 0 or ('doveadm_port_t' not in command_result.stdout and command_result.stdout.count('portcon') > 1)"
+  changed_when: "'doveadm_port_t' not in (command_result.stdout | default(''))"
+  notify:
+  - configure doveadm_port_t
+  tags:
+  - dovecot
+  - polforge
+  when: fedora_selinux and dovecot_replication
