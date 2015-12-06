@@ -1,0 +1,12 @@
+---
+dovecot_replication: False
+dovecot_userdb: []
+dovecot_passdb: []
+dovecot_mail_location: maildir:~/Maildir
+dovecot_listen:
+- "*"
+- "::"
+dovecot_sieve: False
+dovecot_managesieve: False
+dovecot_antispam: False
+dovecot_debug: False

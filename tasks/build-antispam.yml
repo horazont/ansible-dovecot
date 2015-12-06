@@ -1,0 +1,45 @@
+---
+- name: acquire build dependencies (redhat)
+  dnf: name={{ item }} state=latest
+  when: ansible_os_family == "RedHat"
+  with_items:
+  - mercurial
+  - automake
+  - autoconf
+  - gcc
+  - dovecot-devel
+
+- name: acquire build dependencies (debian)
+  apt: name={{ item }} state=latest
+  when: ansible_os_family == "Debian"
+  with_items:
+  - mercurial
+  - automake
+  - autoconf
+  - gcc
+  - dovecot-dev
+
+- name: clone antispam
+  hg: repo=http://hg.dovecot.org/dovecot-antispam-plugin/
+      version=tip
+      dest=/opt/dovecot-antispam
+
+- name: autogen
+  command: ./autogen.sh
+  args:
+    chdir: /opt/dovecot-antispam
+
+- name: configure
+  command: ./configure --prefix=/usr --libdir=/usr/{% if ansible_os_family != "Debian" and ansible_architecture == "x86_64" %}lib64{% else %}lib{% endif %} --with-dovecot=/usr/{% if ansible_os_family != "Debian" and ansible_architecture == "x86_64" %}lib64{% else %}lib{% endif %}/dovecot/
+  args:
+    chdir: /opt/dovecot-antispam
+
+- name: compile
+  command: make
+  args:
+    chdir: /opt/dovecot-antispam
+
+- name: install
+  command: make install
+  args:
+    chdir: /opt/dovecot-antispam

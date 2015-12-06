@@ -1,0 +1,15 @@
+---
+- name: remove antispam (debian)
+  apt: name={{ item }} state=absent
+  when: "ansible_pkg_mgr == 'apt'"
+  with_items:
+  - dovecot-antispam
+
+- include: build-antispam.yml
+
+- name: deploy learn script
+  template: src=sa-learn-stdin.sh
+            dest=/usr/local/bin/sa-learn-stdin.sh
+            mode=ug=rwx,o=rx
+            owner=root
+            group=root

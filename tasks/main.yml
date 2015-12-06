@@ -26,7 +26,6 @@
   - dovecot-sieve
   - dovecot-managesieved
   - dovecot-ldap
-  - dovecot-antispam
   tags:
   - dovecot
 
@@ -100,3 +99,9 @@
   - dovecot
   - polforge
   when: fedora_selinux and dovecot_replication
+
+- include: antispam.yml
+  when: dovecot_antispam
+  tags:
+  - dovecot
+  - antispam

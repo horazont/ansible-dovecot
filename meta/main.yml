@@ -1,3 +1,5 @@
 ---
 dependencies:
 - role: polforge
+- role: spamassassin
+  when: dovecot_antispam
