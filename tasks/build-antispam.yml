@@ -34,6 +34,12 @@
   args:
     chdir: /opt/dovecot-antispam
 
+- name: clean after dovecot update
+  command: make clean
+  when: (dovecot_updated_rh | changed) or (dovecot_updated_deb | changed)
+  args:
+    chdir: /opt/dovecot-antispam
+
 - name: compile
   command: make
   args:

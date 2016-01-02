@@ -7,6 +7,7 @@
   - dovecot-pigeonhole
   tags:
   - dovecot
+  register: dovecot_updated_rh
 
 - name: install selinux utils
   dnf: name={{ item }} state=latest
@@ -28,6 +29,7 @@
   - dovecot-ldap
   tags:
   - dovecot
+  register: dovecot_updated_deb
 
 - name: configure dovecot
   template: src=dovecot/dovecot.conf
