@@ -18,8 +18,16 @@
   - dovecot
   - polforge
 
+- name: on jessie and earlier, make dovecot come from testing
+  copy: src=pin-dovecot.pref
+        dest=/etc/apt/preferences.d/
+  when: ansible_distribution == "Debian" and (ansible_distribution_version | int) <= 8
+  register: pinning
+  tags:
+  - dovecot
+
 - name: install dovecot (debian)
-  apt: name={{ item }} state=latest
+  apt: name={{ item }} state=latest update_cache={{ "yes" if (pinning | changed | default(False)) else "no" }}
   when: ansible_os_family == "Debian"
   with_items:
   - dovecot-core
