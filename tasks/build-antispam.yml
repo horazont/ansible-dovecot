@@ -49,3 +49,5 @@
   command: make install
   args:
     chdir: /opt/dovecot-antispam
+  notify:
+  - restart dovecot
