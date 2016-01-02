@@ -100,6 +100,12 @@
   - polforge
   when: fedora_selinux and dovecot_replication
 
+- include: dovecot-ferm.yml
+  when: ferm
+  tags:
+  - dovecot
+  - ferm
+
 - include: antispam.yml
   when: dovecot_antispam
   tags:
