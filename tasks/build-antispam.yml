@@ -18,6 +18,7 @@
   - autoconf
   - gcc
   - dovecot-dev
+  - build-essential
 
 - name: clone antispam
   hg: repo=http://hg.dovecot.org/dovecot-antispam-plugin/
@@ -36,7 +37,7 @@
 
 - name: clean after dovecot update
   command: make clean
-  when: (dovecot_updated_rh | changed) or (dovecot_updated_deb | changed)
+  when: (dovecot_updated_rh | changed) or (dovecot_updated_deb | changed) or (force_dovecot_rebuild | default(False))
   args:
     chdir: /opt/dovecot-antispam
 
