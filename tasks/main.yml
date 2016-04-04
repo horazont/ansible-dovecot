@@ -39,12 +39,46 @@
   - dovecot
   register: dovecot_updated_deb
 
+- name: create vmail group
+  group:
+    name=vmail
+    state=present
+    system=yes
+  tags:
+  - dovecot
+
+- name: create vmail user
+  user:
+    createhome=no
+    name=vmail
+    system=yes
+    group=vmail
+    groups=mail
+    shell=/sbin/nologin
+    state=present
+  tags:
+  - dovecot
+
 - name: configure dovecot
   template: src=dovecot/dovecot.conf
             dest=/etc/dovecot/dovecot.conf
-            owner=root
-            group=root
+            owner=dovecot
+            group=dovecot
             mode=ugo=r
+  tags:
+  - dovecot
+  notify:
+  - restart dovecot
+
+- name: configure ldap dbs
+  template:
+    src=dovecot/dovecot-userdb-ldap.conf
+    dest={{ item.file }}
+    owner=dovecot
+    group=dovecot
+    mode=ugo=r
+  with_items: dovecot_userdb + dovecot_passdb
+  when: item.driver == "ldap"
   tags:
   - dovecot
   notify:
