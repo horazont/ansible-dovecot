@@ -77,7 +77,7 @@
     owner=dovecot
     group=dovecot
     mode=ugo=r
-  with_items: dovecot_userdb + dovecot_passdb
+  with_items: "{{ dovecot_userdb + dovecot_passdb }}"
   when: item.driver == "ldap"
   tags:
   - dovecot
