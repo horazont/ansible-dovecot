@@ -1,26 +1,35 @@
 ---
 - name: "imap: deploy ferm file"
   copy:
-    src=ferm-imap.conf
-    dest=/etc/ferm/ferm.d/40-dovecot-imap.conf
-    owner=root
-    group=root
+    src: ferm-imap.conf
+    dest: /etc/ferm/ferm.d/40-dovecot-imap.conf
+    owner: root
+    group: root
   notify: run ferm
 
 - name: "managesieve: deploy ferm file"
   copy:
-    src=ferm-managesieve.conf
-    dest=/etc/ferm/ferm.d/40-dovecot-manageseive.conf
-    owner=root
-    group=root
+    src: ferm-managesieve.conf
+    dest: /etc/ferm/ferm.d/40-dovecot-manageseive.conf
+    owner: root
+    group: root
   notify: run ferm
-  when: dovecot_managesieve
+  when: "{{ dovecot_managesieve }}"
 
 - name: "replication: deploy ferm file"
   template:
-    src=ferm-replication.conf
-    dest=/etc/ferm/ferm.d/50-dovecot-replication.conf
-    owner=root
-    group=root
+    src: ferm-replication.conf
+    dest: /etc/ferm/ferm.d/50-dovecot-replication.conf
+    owner: root
+    group: root
   notify: run ferm
-  when: dovecot_replication
+  when: "{{ dovecot_replication }}"
+
+- name: "quota status service: deploy ferm file"
+  template:
+    src: ferm-quota.conf
+    dest: /etc/ferm/ferm.d/50-dovecot-quota.conf
+    owner: root
+    group: root
+  notify: run ferm
+  when: "{{ dovecot_quota and dovecot_quota_service }}"
