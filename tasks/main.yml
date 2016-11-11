@@ -85,24 +85,62 @@
   - restart dovecot
 
 - name: upload certificate
-  copy: content="{{ dovecot_tls_cert }}"
-        dest=/etc/dovecot/ssl.crt
-        owner=root
-        group=root
-        mode=ugo=r
+  copy:
+    content: "{{ dovecot_tls_cert }}"
+    dest: /etc/dovecot/ssl.crt
+    owner: root
+    group: root
+    mode: ugo=r
+  when: "{{ not dovecot_tls_cert_file }}"
   tags:
   - dovecot
+  - certificate
+  notify:
+  - restart dovecot
+
+- name: link certificate
+  file:
+    state: link
+    src: "{{ dovecot_tls_cert_file }}"
+    dest: /etc/dovecot/ssl.crt
+    owner: root
+    group: root
+    mode: u=r,go-rwx
+    force: yes
+  when: "{{ not not dovecot_tls_cert_file }}"
+  tags:
+  - dovecot
+  - certificate
   notify:
   - restart dovecot
 
 - name: upload key
-  copy: content="{{ dovecot_tls_key }}"
-        dest=/etc/dovecot/ssl.key
-        owner=root
-        group=root
-        mode=u=r,go-rwx
+  copy:
+    content: "{{ dovecot_tls_key }}"
+    dest: /etc/dovecot/ssl.key
+    owner: root
+    group: root
+    mode: u=r,go-rwx
+  when: "{{ not dovecot_tls_key_file }}"
   tags:
   - dovecot
+  - certificate
+  notify:
+  - restart dovecot
+
+- name: link key
+  file:
+    state: link
+    src: "{{ dovecot_tls_key_file }}"
+    dest: /etc/dovecot/ssl.key
+    owner: root
+    group: root
+    mode: u=r,go-rwx
+    force: yes
+  when: "{{ not not dovecot_tls_key_file }}"
+  tags:
+  - dovecot
+  - certificate
   notify:
   - restart dovecot
 
