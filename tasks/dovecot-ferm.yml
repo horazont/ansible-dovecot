@@ -1,6 +1,6 @@
 ---
 - name: "imap: deploy ferm file"
-  copy:
+  template:
     src: ferm-imap.conf
     dest: /etc/ferm/ferm.d/40-dovecot-imap.conf
     owner: root
@@ -8,7 +8,7 @@
   notify: run ferm
 
 - name: "managesieve: deploy ferm file"
-  copy:
+  template:
     src: ferm-managesieve.conf
     dest: /etc/ferm/ferm.d/40-dovecot-manageseive.conf
     owner: root
