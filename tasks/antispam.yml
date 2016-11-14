@@ -5,6 +5,11 @@
   with_items:
   - dovecot-antispam
 
+- name: install spamc
+  apt:
+    name: spamc
+    state: latest
+
 - include: build-antispam.yml
 
 - name: deploy learn script
