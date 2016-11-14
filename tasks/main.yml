@@ -1,33 +1,18 @@
 ---
-- name: install dovecot (redhat)
-  dnf: name={{ item }} state=latest
-  when: ansible_os_family == "RedHat" and ansible_pkg_mgr == "dnf"
-  with_items:
-  - dovecot
-  - dovecot-pigeonhole
-  tags:
-  - dovecot
-  register: dovecot_updated_rh
-
-- name: install selinux utils
-  dnf: name={{ item }} state=latest
-  when: fedora_selinux
-  with_items:
-  - setools-console
-  tags:
-  - dovecot
-  - polforge
-
 - name: on jessie and earlier, make dovecot come from testing
-  copy: src=pin-dovecot.pref
-        dest=/etc/apt/preferences.d/
+  copy:
+    src: pin-dovecot.pref
+    dest: /etc/apt/preferences.d/
   when: ansible_distribution == "Debian" and (ansible_distribution_version | int) <= 8
   register: pinning
   tags:
   - dovecot
 
 - name: install dovecot (debian)
-  apt: name={{ item }} state=latest update_cache={{ "yes" if (pinning | changed | default(False)) else "no" }}
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: "{{ 'yes' if (pinning | changed | default(False)) else 'no' }}"
   when: ansible_os_family == "Debian"
   with_items:
   - dovecot-core
@@ -41,30 +26,31 @@
 
 - name: create vmail group
   group:
-    name=vmail
-    state=present
-    system=yes
+    name: vmail
+    state: present
+    system: yes
   tags:
   - dovecot
 
 - name: create vmail user
   user:
-    createhome=no
-    name=vmail
-    system=yes
-    group=vmail
-    groups=mail
-    shell=/sbin/nologin
-    state=present
+    createhome: no
+    name: vmail
+    system: yes
+    group: mail
+    groups: mail
+    shell: /sbin/nologin
+    state: present
   tags:
   - dovecot
 
 - name: configure dovecot
-  template: src=dovecot/dovecot.conf
-            dest=/etc/dovecot/dovecot.conf
-            owner=dovecot
-            group=dovecot
-            mode=ugo=r
+  template:
+    src: dovecot/dovecot.conf
+    dest: /etc/dovecot/dovecot.conf
+    owner: dovecot
+    group: dovecot
+    mode: ugo=r
   tags:
   - dovecot
   notify:
@@ -72,11 +58,11 @@
 
 - name: configure ldap dbs
   template:
-    src=dovecot/dovecot-userdb-ldap.conf
-    dest={{ item.file }}
-    owner=dovecot
-    group=dovecot
-    mode=ugo=r
+    src: dovecot/dovecot-userdb-ldap.conf
+    dest: "{{ item.file }}"
+    owner: dovecot
+    group: dovecot
+    mode: ugo=r
   with_items: "{{ dovecot_userdb + dovecot_passdb }}"
   when: item.driver == "ldap"
   tags:
@@ -143,44 +129,6 @@
   - certificate
   notify:
   - restart dovecot
-
-- name: add polforge module
-  template: src=dovecot_replication.te
-            dest="{{ polforge_dir }}/modules/"
-            owner=root
-            group=root
-            mode=u=rw,go-rwx
-  tags:
-  - dovecot
-  - polforge
-  when: fedora_selinux and dovecot_replication
-  notify:
-  - rebuild polforge
-  - configure doveadm_port_t
-  - restart dovecot
-
-- name: remove legacy polforge module
-  file: path="{{ polforge_dir }}/modules/doveadm_port.te"
-        state=absent
-  tags:
-  - dovecot
-  - polforge
-  when: fedora_selinux and dovecot_replication
-  notify:
-  - rebuild polforge
-  - restart dovecot
-
-- name: test current port type of doveadm port
-  command: seinfo --portcon={{ dovecot_doveadm_port }} --protocol=tcp
-  register: command_result
-  failed_when: "command_result.rc != 0 or ('doveadm_port_t' not in command_result.stdout and command_result.stdout.count('portcon') > 1)"
-  changed_when: "'doveadm_port_t' not in (command_result.stdout | default(''))"
-  notify:
-  - configure doveadm_port_t
-  tags:
-  - dovecot
-  - polforge
-  when: fedora_selinux and dovecot_replication
 
 - include: dovecot-ferm.yml
   when: ferm
