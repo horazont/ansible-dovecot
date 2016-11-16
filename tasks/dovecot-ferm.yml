@@ -1,7 +1,7 @@
 ---
 - name: "imap: deploy ferm file"
   template:
-    src: ferm-imap.conf
+    src: ferm/imap.conf
     dest: /etc/ferm/ferm.d/40-dovecot-imap.conf
     owner: root
     group: root
@@ -9,7 +9,7 @@
 
 - name: "managesieve: deploy ferm file"
   template:
-    src: ferm-managesieve.conf
+    src: ferm/managesieve.conf
     dest: /etc/ferm/ferm.d/40-dovecot-manageseive.conf
     owner: root
     group: root
@@ -18,7 +18,7 @@
 
 - name: "replication: deploy ferm file"
   template:
-    src: ferm-replication.conf
+    src: ferm/replication.conf
     dest: /etc/ferm/ferm.d/50-dovecot-replication.conf
     owner: root
     group: root

@@ -22,6 +22,8 @@ dovecot_quota_service_firewall_saddr_whitelist:
 - ::1/128
 dovecot_tls_cert_file: False
 dovecot_tls_key_file: False
+dovecot_imaps: False
+dovecot_lmtp: False
 
 dovecot_iptables_imap_accounting: False
 dovecot_iptables_replication_accounting: False

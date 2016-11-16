@@ -1,17 +1,9 @@
 ---
-- name: acquire build dependencies (redhat)
-  dnf: name={{ item }} state=latest
-  when: ansible_os_family == "RedHat"
-  with_items:
-  - mercurial
-  - automake
-  - autoconf
-  - gcc
-  - dovecot-devel
-
-- name: acquire build dependencies (debian)
-  apt: name={{ item }} state=latest
-  when: ansible_os_family == "Debian"
+- name: acquire build dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+  when: "{{ ansible_os_family == 'Debian' }}"
   with_items:
   - mercurial
   - automake
@@ -21,9 +13,10 @@
   - build-essential
 
 - name: clone antispam
-  hg: repo=http://hg.dovecot.org/dovecot-antispam-plugin/
-      version=tip
-      dest=/opt/dovecot-antispam
+  hg:
+    repo: http://hg.dovecot.org/dovecot-antispam-plugin/
+    version: tip
+    dest: /opt/dovecot-antispam
 
 - name: autogen
   command: ./autogen.sh
@@ -31,13 +24,13 @@
     chdir: /opt/dovecot-antispam
 
 - name: configure
-  command: ./configure --prefix=/usr --libdir=/usr/{% if ansible_os_family != "Debian" and ansible_architecture == "x86_64" %}lib64{% else %}lib{% endif %} --with-dovecot=/usr/{% if ansible_os_family != "Debian" and ansible_architecture == "x86_64" %}lib64{% else %}lib{% endif %}/dovecot/
+  command: ./configure --prefix=/usr --libdir=/usr/lib --with-dovecot=/usr/lib/dovecot/
   args:
     chdir: /opt/dovecot-antispam
 
 - name: clean after dovecot update
   command: make clean
-  when: (dovecot_updated_rh | changed) or (dovecot_updated_deb | changed) or (force_dovecot_rebuild | default(False))
+  when: "{{ (dovecot_updated_deb | default({}) | changed) or (force_dovecot_rebuild | default(False)) }}"
   args:
     chdir: /opt/dovecot-antispam
 

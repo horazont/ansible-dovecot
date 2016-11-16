@@ -13,13 +13,13 @@
     name: "{{ item }}"
     state: latest
     update_cache: "{{ 'yes' if (pinning | changed | default(False)) else 'no' }}"
-  when: ansible_os_family == "Debian"
   with_items:
   - dovecot-core
   - dovecot-imapd
   - dovecot-sieve
   - dovecot-managesieved
   - dovecot-ldap
+  - dovecot-lmtpd
   tags:
   - dovecot
   register: dovecot_updated_deb
