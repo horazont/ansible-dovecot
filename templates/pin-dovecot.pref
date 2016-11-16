@@ -1,0 +1,5 @@
+{% if (apt_release | default(ansible_distribution_release)) == "jessie" %}
+Package: dovecot-*
+Pin: release n=stretch
+Pin-Priority: 990
+{% endif %}
