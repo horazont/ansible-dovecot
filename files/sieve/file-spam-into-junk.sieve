@@ -2,7 +2,9 @@
 
 require ["fileinto", "mime"];
 
-if header :contains "X-Spam-Flag" ["YES"] {
+if anyof(header :contains "X-Spam-Flag" "YES",
+         header :matches "X-Spam-Status" "Yes*")
+{
     fileinto "Junk";
     stop;
 }
