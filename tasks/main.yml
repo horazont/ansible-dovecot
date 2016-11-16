@@ -135,8 +135,14 @@
   - dovecot
   - ferm
 
+- include: sieve.yml
+  when: dovecot_sieve
+  tags:
+  - dovecot
+  - dovecot-sieve
+
 - include: antispam.yml
   when: dovecot_antispam
   tags:
   - dovecot
-  - antispam
+  - dovecot-antispam

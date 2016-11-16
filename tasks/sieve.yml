@@ -1,0 +1,25 @@
+---
+- name: create global sieve directory
+  file:
+    path: /usr/local/share/sieve
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,go=rx
+
+- name: deploy global sieve scripts
+  copy:
+    src: "sieve/{{ item }}"
+    dest: /usr/local/share/sieve/
+    owner: root
+    group: root
+    mode: u=rw,go=r
+  register: sieve_scripts
+  with_items:
+  - default.sieve
+  - file-spam-into-junk.sieve
+
+- name: compile global sieve scripts
+  command: "sievec -c /etc/dovecot/dovecot.conf '/usr/local/share/sieve/{{ item.item }}'"
+  with_items: "{{ sieve_scripts.results }}"
+  when: "{{ item | changed }}"
