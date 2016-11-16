@@ -10,6 +10,16 @@ dovecot_sieve: False
 dovecot_managesieve: False
 dovecot_antispam: False
 dovecot_debug: False
+dovecot_quota: False
+dovecot_quota_bytes_default: "1G"
+dovecot_quota_service: False
+dovecot_quota_service_port: 15244
+dovecot_quota_service_listen:
+- 127.0.0.1
+- ::1
+dovecot_quota_service_firewall_saddr_whitelist:
+- 127.0.0.0/8
+- ::1/128
 dovecot_tls_cert_file: False
 dovecot_tls_key_file: False
 

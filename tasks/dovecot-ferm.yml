@@ -24,12 +24,3 @@
     group: root
   notify: run ferm
   when: "{{ dovecot_replication }}"
-
-- name: "quota status service: deploy ferm file"
-  template:
-    src: ferm-quota.conf
-    dest: /etc/ferm/ferm.d/50-dovecot-quota.conf
-    owner: root
-    group: root
-  notify: run ferm
-  when: "{{ dovecot_quota and dovecot_quota_service }}"
