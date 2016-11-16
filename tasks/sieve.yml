@@ -16,10 +16,9 @@
     mode: u=rw,go=r
   register: sieve_scripts
   with_items:
-  - default.sieve
   - file-spam-into-junk.sieve
+  - default.sieve
 
 - name: compile global sieve scripts
   command: "sievec -c /etc/dovecot/dovecot.conf '/usr/local/share/sieve/{{ item.item }}'"
   with_items: "{{ sieve_scripts.results }}"
-  when: "{{ item | changed }}"
