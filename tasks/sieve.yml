@@ -17,6 +17,7 @@
   register: sieve_scripts
   with_items:
   - file-spam-into-junk.sieve
+  - flag-spam-as-junk.sieve
   - default.sieve
 
 - name: compile global sieve scripts
