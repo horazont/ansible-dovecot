@@ -1,11 +1,14 @@
 ---
-- name: create global sieve directory
+- name: create global sieve directories
   file:
-    path: /usr/local/share/sieve
+    path: "/usr/local/share/{{ item }}"
     state: directory
     owner: root
     group: root
     mode: u=rwx,go=rx
+  with_items:
+  - sieve
+  - imapsieve
 
 - name: deploy global sieve scripts
   copy:
@@ -23,3 +26,18 @@
 - name: compile global sieve scripts
   command: "sievec -c /etc/dovecot/dovecot.conf '/usr/local/share/sieve/{{ item.item }}'"
   with_items: "{{ sieve_scripts.results }}"
+
+- name: deploy global imapsieve scripts
+  copy:
+    src: "imapsieve/{{ item }}"
+    dest: /usr/local/share/imapsieve/
+    owner: root
+    group: root
+    mode: u=rw,go=r
+  register: imapsieve_scripts
+  with_items:
+  - antispam.sieve
+
+- name: compile global imapsieve scripts
+  command: "sievec -c /etc/dovecot/dovecot.conf '/usr/local/share/imapsieve/{{ item.item }}'"
+  with_items: "{{ imapsieve_scripts.results }}"
