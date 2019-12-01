@@ -135,6 +135,12 @@
   - dovecot
   - ferm
 
+- include: dovecot-nft.yml
+  when: nft
+  tags:
+  - dovecot
+  - nft
+
 - include: sieve.yml
   when: dovecot_sieve
   tags:

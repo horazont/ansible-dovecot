@@ -2,6 +2,8 @@
 dependencies:
 - role: ferm
   when: "ferm | default(False)"
+- role: nft
+  when: "nft | default(False)"
 - role: polforge
 - role: spamassassin
   when: dovecot_antispam

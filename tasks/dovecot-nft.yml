@@ -1,0 +1,26 @@
+---
+- name: "imap: deploy nft file"
+  template:
+    src: nft/imap.conf
+    dest: /etc/nft.d/40-dovecot-imap.conf
+    owner: root
+    group: root
+  notify: reload nft
+
+- name: "managesieve: deploy nft file"
+  template:
+    src: nft/managesieve.conf
+    dest: /etc/nft.d/40-dovecot-manageseive.conf
+    owner: root
+    group: root
+  notify: reload nft
+  when: "{{ dovecot_managesieve }}"
+
+- name: "replication: deploy nft file"
+  template:
+    src: nft/replication.conf
+    dest: /etc/nft.d/50-dovecot-replication.conf
+    owner: root
+    group: root
+  notify: reload nft
+  when: "{{ dovecot_replication }}"
