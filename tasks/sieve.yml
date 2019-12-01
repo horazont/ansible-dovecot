@@ -24,7 +24,13 @@
   - default.sieve
 
 - name: compile global sieve scripts
-  command: "sievec -c /etc/dovecot/dovecot.conf '/usr/local/share/sieve/{{ item.item }}'"
+  command:
+  args:
+    argv:
+    - sievec
+    - "-c"
+    - "/etc/dovecot/dovecot.conf"
+    - "/usr/local/share/sieve/{{ item.item }}"
   with_items: "{{ sieve_scripts.results }}"
 
 - name: deploy global imapsieve scripts
@@ -39,5 +45,11 @@
   - antispam.sieve
 
 - name: compile global imapsieve scripts
-  command: "sievec -c /etc/dovecot/dovecot.conf '/usr/local/share/imapsieve/{{ item.item }}'"
+  command:
+  args:
+    argv:
+    - "sievec"
+    - "-c"
+    - "/etc/dovecot/dovecot.conf"
+    - "/usr/local/share/imapsieve/{{ item.item }}"
   with_items: "{{ imapsieve_scripts.results }}"
