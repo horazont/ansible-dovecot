@@ -24,6 +24,7 @@
   - dovecot-managesieved
   - dovecot-ldap
   - dovecot-lmtpd
+  - dovecot-submissiond
   tags:
   - dovecot
   register: dovecot_updated_deb
