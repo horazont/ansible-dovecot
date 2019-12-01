@@ -14,7 +14,7 @@
 
 - name: clone antispam
   git:
-    repo: https://pubgit.sotecware.net/infrastructure/dovecot-antispam-plugin
+    repo: https://github.com/horazont/dovecot-antispam-plugin
     version: feature/imapflags
     dest: /opt/dovecot-antispam
 
