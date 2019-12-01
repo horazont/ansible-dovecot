@@ -12,17 +12,6 @@
     owner: root
     group: root
 
-- name: deploy pipe scripts
-  copy:
-    src: "{{ item }}"
-    dest: /usr/local/lib/dovecot/sieve
-    mode: ugo=rx
-    owner: root
-    group: root
-  with_items:
-  - sa-learn-ham.sh
-  - sa-learn-spam.sh
-
 - name: deploy global imapsieve scripts
   copy:
     src: "imapsieve/{{ item }}"
@@ -45,3 +34,26 @@
     - "/etc/dovecot/dovecot.conf"
     - "/usr/local/share/imapsieve/{{ item.item }}"
   with_items: "{{ imapsieve_scripts.results }}"
+
+- name: create override directory for dovecot service
+  file:
+    state: directory
+    path: /etc/systemd/system/dovecot.service.d
+    owner: root
+    group: root
+    mode: u=rwx,go=rx
+
+- name: amend systemd service
+  copy:
+    src: systemd/00-antispam.conf
+    dest: /etc/systemd/system/dovecot.service.d/00-antispam.conf
+  register: systemd_override
+  notify: restart dovecot
+
+- name: reload systemd
+  command:
+  args:
+    argv:
+    - systemctl
+    - daemon-reload
+  when: "systemd_override is changed"

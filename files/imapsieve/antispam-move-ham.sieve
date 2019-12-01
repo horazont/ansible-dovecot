@@ -1,7 +1,7 @@
 require ["vnd.dovecot.pipe", "copy", "imapsieve", "imap4flags"];
 
 if not hasflag :is ["antispam-Ham"] {
-    pipe :copy "sa-learn-ham.sh";
+    pipe :copy "sa-learn-ham";
 }
 
 # Synchronise flags with all clients and mark message as learnt-as-ham to

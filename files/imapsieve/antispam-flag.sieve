@@ -19,7 +19,7 @@ if allof(anyof(hasflag :is ["Junk"],
     addflag ["Junk", "$JUNK", "antispam-Spam"];
     removeflag ["$NOTJUNK", "antispam-Ham"];
     # We also hand the message to a spam classifier for learning.
-    pipe :copy "sa-learn-spam.sh";
+    pipe :copy "sa-learn-spam";
 }
 elsif allof(anyof(not hasflag :is ["Junk"],
                   not hasflag :is ["$JUNK"]),
@@ -39,7 +39,7 @@ elsif allof(anyof(not hasflag :is ["Junk"],
     }
     addflag ["antispam-Ham"];
     removeflag ["Junk", "$JUNK", "antispam-Spam"];
-    pipe :copy "sa-learn-ham.sh";
+    pipe :copy "sa-learn-ham";
 }
 elsif allof(hasflag :is ["$NOTJUNK"],
             not hasflag :is ["antispam-Ham"])
@@ -48,5 +48,5 @@ elsif allof(hasflag :is ["$NOTJUNK"],
     # learn as ham.
     removeflag ["Junk", "$JUNK", "antispam-Spam"];
     addflag ["antispam-Ham", "$NOTJUNK"];
-    pipe :copy "sa-learn-ham.sh";
+    pipe :copy "sa-learn-ham";
 }
