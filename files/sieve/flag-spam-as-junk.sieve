@@ -5,11 +5,13 @@ require ["fileinto", "imap4flags"];
 if header :contains "X-Spam-Status" "autolearn=spam"
 {
     # So that *both* Thunderbird and KMail understand what’s going on here
-    addflag "$JUNK Junk";
+    # We also add the antispam-TB-Junk flag to ensure that the FLAG
+    # imapsieve script will un-learn the junk status if it is changed
+    addflag ["$JUNK", "Junk", "antispam-Spam"];
 }
 
 if header :contains "X-Spam-Status" "autolearn=ham"
 {
     # This one is for KMail
-    addflag "$NOTJUNK";
+    addflag ["$NOTJUNK", "antispam-Ham"];
 }

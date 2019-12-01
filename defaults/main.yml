@@ -9,6 +9,7 @@ dovecot_listen:
 dovecot_sieve: False
 dovecot_managesieve: False
 dovecot_antispam: False
+dovecot_imapsieve: False
 dovecot_debug: False
 dovecot_quota: False
 dovecot_quota_bytes_default: "1G"

@@ -1,4 +1,9 @@
 ---
+- name: dovecot_antispam and dovecot_sieve
+  fail:
+    msg: dovecot_antispam now requires dovecot_sieve and dovecot_imapsieve
+  when: "{{ dovecot_antispam and (not dovecot_sieve or not dovecot_imapsieve) }}"
+
 - name: dovecot pin
   template:
     src: pin-dovecot.pref
