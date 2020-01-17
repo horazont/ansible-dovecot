@@ -16,7 +16,7 @@
   apt:
     name: "{{ item }}"
     state: latest
-    update_cache: "{{ 'yes' if (pinning | changed | default(False)) else 'no' }}"
+    update_cache: "{{ 'yes' if (pinning is changed | default(False)) else 'no' }}"
   with_items:
   - dovecot-core
   - dovecot-imapd
