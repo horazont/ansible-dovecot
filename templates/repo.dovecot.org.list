@@ -1,0 +1,3 @@
+{% if dovecot_use_upstream_repo %}
+deb {% if apt_cacher | default(False) %}http{% else %}https{% endif %}://repo.dovecot.org/{{ dovecot_use_upstream_repo_version }}/debian/{{ apt_release }} {{ apt_release }} main
+{% endif %}

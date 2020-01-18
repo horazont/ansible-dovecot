@@ -37,3 +37,7 @@ dovecot_mail_max_userip_connections: 10
 dovecot_iptables_imap_accounting: False
 dovecot_iptables_replication_accounting: False
 dovecot_iptables_managesieve_accounting: False
+
+# Debian buster has a dovecot version where replication is borked
+dovecot_use_upstream_repo: "{{ apt_release == 'buster' }}"
+dovecot_use_upstream_repo_version: "ce-2.3-latest"

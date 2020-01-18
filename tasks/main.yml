@@ -12,19 +12,58 @@
   tags:
   - dovecot
 
+- name: pre-requisites for repo.dovecot.org
+  apt:
+    name:
+    - apt-transport-https
+  tags:
+  - dovecot
+  when: dovecot_use_upstream_repo
+
+- name: load key for repo.dovecot.org
+  get_url:
+    url: https://repo.dovecot.org/DOVECOT-REPO-GPG
+    dest: /root/DOVECOT-REPO-GPG
+    mode: u=rw,go-rwx
+  tags:
+  - dovecot
+  when: dovecot_use_upstream_repo
+  register: dovecot_upstream_repo_key
+
+- name: add apt key for repo.dovecot.org
+  command:
+  args:
+    argv:
+    - apt-key
+    - add
+    - /root/DOVECOT-REPO-GPG
+  tags:
+  - dovecot
+  when: dovecot_upstream_repo_key is changed
+
+- name: add apt repository
+  template:
+    src: repo.dovecot.org.list
+    dest: /etc/apt/sources.list.d
+    owner: root
+    group: root
+    mode: u=rw,go=r
+  tags:
+  - dovecot
+  register: dovecot_upstream_repo
+
 - name: install dovecot (debian)
   apt:
-    name: "{{ item }}"
+    name:
+    - dovecot-core
+    - dovecot-imapd
+    - dovecot-sieve
+    - dovecot-managesieved
+    - dovecot-ldap
+    - dovecot-lmtpd
+    - dovecot-submissiond
     state: latest
-    update_cache: "{{ 'yes' if (pinning is changed | default(False)) else 'no' }}"
-  with_items:
-  - dovecot-core
-  - dovecot-imapd
-  - dovecot-sieve
-  - dovecot-managesieved
-  - dovecot-ldap
-  - dovecot-lmtpd
-  - dovecot-submissiond
+    update_cache: "{{ 'yes' if (pinning is changed | default(False)) or (dovecot_use_upstream_repo and (dovecot_upstream_repo is changed)) else 'no' }}"
   tags:
   - dovecot
   register: dovecot_updated_deb
