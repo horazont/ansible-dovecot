@@ -33,6 +33,7 @@ dovecot_msa_relay_tls: False
 dovecot_msa_relay_tls_verify: True
 dovecot_postfix_sasl_socket: True
 dovecot_mail_max_userip_connections: 10
+dovecot_stats: False
 
 dovecot_iptables_imap_accounting: False
 dovecot_iptables_replication_accounting: False
