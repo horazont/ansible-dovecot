@@ -42,3 +42,5 @@ dovecot_iptables_managesieve_accounting: False
 # Debian buster has a dovecot version where replication is borked
 dovecot_use_upstream_repo: "{{ apt_release == 'buster' }}"
 dovecot_use_upstream_repo_version: "ce-2.3-latest"
+
+dovecot_antispam_daemon: spamassassin
