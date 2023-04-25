@@ -88,6 +88,34 @@
   tags:
   - dovecot
 
+- name: create mail directory
+  file:
+    state: directory
+    owner: vmail
+    group: mail
+    mode: u=rwx,g=rx,o-rwx
+    path: '{{ dovecot_mail_basedir }}'
+  tags:
+  - dovecot
+
+- name: generate DH parameters
+  command: openssl dhparam -out /etc/dovecot/ssl.dhparam 4096
+  args:
+    creates: /etc/dovecot/ssl.dhparam
+  tags:
+  - dovecot
+
+- name: create simple password database
+  template:
+    src: passwd-file
+    dest: /etc/dovecot/passwd
+    owner: dovecot
+    group: dovecot
+    mode: u=rw,go-rwx
+  tags:
+  - dovecot
+  when: dovecot_simple_passdb_accounts
+
 - name: configure dovecot
   template:
     src: dovecot/dovecot.conf

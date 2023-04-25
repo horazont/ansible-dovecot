@@ -1,0 +1,3 @@
+{% for item in dovecot_simple_passdb_accounts %}
+{{ item.name }}:{{ item.password }}
+{% endfor %}

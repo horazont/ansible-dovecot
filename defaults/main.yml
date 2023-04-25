@@ -44,3 +44,6 @@ dovecot_use_upstream_repo: "{{ apt_release == 'buster' }}"
 dovecot_use_upstream_repo_version: "ce-2.3-latest"
 
 dovecot_antispam_daemon: spamassassin
+
+dovecot_simple_passdb_accounts: []
+dovecot_mail_basedir: /var/vmail
